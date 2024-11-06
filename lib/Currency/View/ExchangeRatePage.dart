@@ -3,8 +3,8 @@ import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
 import 'package:flutter_currency/Currency/View/Component/CurrencyRateWidget.dart';
 import 'package:flutter_currency/Currency/View/RateConvesionPage.dart';
 import 'package:flutter_currency/Currency/ViewModel/CurrencyViewModel.dart';
-import 'package:flutter_currency/Utility/ColorTable.dart';
-import 'package:flutter_currency/Utility/RadiusTable.dart';
+import 'package:flutter_currency/Utility/ColorUtility.dart';
+import 'package:flutter_currency/Utility/RadiusUtility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -16,26 +16,23 @@ class ExchangeRatePage extends ConsumerStatefulWidget {
 }
 
 class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> {
-  late CurrencyViewModel _viewModel;
-
   @override
   void initState() {
     super.initState();
-    _viewModel = ref.read(currencyViewModel.notifier);
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      _viewModel.getMockData();
+      ref.read(currencyViewModel.notifier).getMockData();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final currencyModelData = ref.watch(currencyViewModel.select((state) => state.currencyModelData));
-    ref.watch(currencyViewModel);
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: ColorTable.appbarColor,
+        backgroundColor: ColorUtility.appbarColor,
         title: const Text('Rate Table (TWD)'),
+        centerTitle: true,
       ),
       body: Column(
         children: [
@@ -43,7 +40,7 @@ class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> {
           Divider(color: Colors.black, height: 1.h),
           tableWidget(currencyModelData),
           Divider(color: Colors.black, height: 1.h),
-          buttonWidget(),
+          buttonWidget(currencyModelData),
         ],
       ),
     );
@@ -51,8 +48,8 @@ class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> {
 
   Widget titleWidget() {
     return Container(
-      height: 30.w,
-      color: ColorTable.appbarColor,
+      height: 30.h,
+      color: ColorUtility.appbarColor,
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [Text('Currency'), Text('Price')],
@@ -62,42 +59,40 @@ class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> {
 
   Widget tableWidget(List<CurrencyModelData> currencyModelData) {
     return Expanded(
-      child: ListView.separated(
-        separatorBuilder: (BuildContext context, int index) => SizedBox(height: 15.h),
-        itemCount: currencyModelData.length,
-        itemBuilder: (context, index) {
-          return Container(
-            height: 30.h,
-            margin: EdgeInsets.only(top: 15.h),
-            padding: EdgeInsets.symmetric(horizontal: 20.w),
-            child: CurrencyRateWidget(currencyData: currencyModelData[index]),
-          );
-        },
-      ),
-    );
+        child: ListView.separated(
+      padding: EdgeInsets.symmetric(vertical: 20.h),
+      separatorBuilder: (BuildContext context, int index) => SizedBox(height: 25.h),
+      itemCount: currencyModelData.length,
+      physics: const BouncingScrollPhysics(),
+      itemBuilder: (context, index) {
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 20.w),
+          child: CurrencyRateWidget(currencyData: currencyModelData[index]),
+        );
+      },
+    ));
   }
 
-  Widget buttonWidget() {
-    return SizedBox(
-      height: 120.w,
-      child: Container(
-        margin: EdgeInsets.only(top: 20.h, bottom: 35.h, left: 80.w, right: 80.w),
-        child: GestureDetector(
-          onTap: () => Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const RateConvesionPage()),
-          ),
-          child: ClipRRect(
-            borderRadius: RadiusTable.radiusTwenty,
-            child: Container(
-                alignment: Alignment.center,
-                height: 50.w,
-                color: ColorTable.appbarColor,
-                child: Text(
-                  'Rate Conversion',
-                  style: TextStyle(fontSize: 20.sp),
-                )),
-          ),
+  Widget buttonWidget(List<CurrencyModelData> currencyModelData) {
+    return Container(
+      margin: EdgeInsets.only(top: 20.h, bottom: 35.h, left: 80.w, right: 80.w),
+      child: GestureDetector(
+        onTap: () => (currencyModelData.isNotEmpty)
+            ? Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const RateConvesionPage()),
+              )
+            : null,
+        child: ClipRRect(
+          borderRadius: RadiusUtility.radiusTwenty,
+          child: Container(
+              alignment: Alignment.center,
+              height: 50.h,
+              color: ColorUtility.appbarColor,
+              child: Text(
+                'Rate Conversion',
+                style: TextStyle(fontSize: 20.sp),
+              )),
         ),
       ),
     );

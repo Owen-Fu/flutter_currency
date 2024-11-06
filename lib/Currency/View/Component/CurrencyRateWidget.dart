@@ -5,13 +5,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 class CurrencyRateWidget extends StatelessWidget {
-  CurrencyRateWidget({super.key, required this.currencyData});
+  const CurrencyRateWidget({super.key, required this.currencyData, this.isTablePage = true, this.isSelected = false});
 
-  CurrencyModelData currencyData;
+  final bool isTablePage;
+  final bool isSelected;
+  final CurrencyModelData currencyData;
 
   @override
   Widget build(BuildContext context) {
-    String currencyTitle = "${currencyData.currency ?? ""}/TWD";
+    String currencyTitle = isTablePage ? "${currencyData.currency ?? ""}/TWD" : currencyData.currency ?? "";
     String priceString = NumberFormat('#,##0.00').format(currencyData.twdPrice);
     return Row(children: [
       Expanded(
@@ -23,12 +25,11 @@ class CurrencyRateWidget extends StatelessWidget {
                 height: 30.h,
                 child: CachedNetworkImage(
                   imageUrl: currencyData.currencyIcon ?? '',
-                  // placeholder: (context, url) => CircularProgressIndicator(),
-                  // errorWidget: (context, url, error) => Icon(Icons.error),
+                  errorWidget: (context, url, error) => const Icon(Icons.crop_square, size: 30),
                   fit: BoxFit.cover,
                 ),
               ),
-              SizedBox(width: 5.w),
+              SizedBox(width: 8.w),
               Text(currencyTitle),
             ],
           )),
@@ -36,8 +37,12 @@ class CurrencyRateWidget extends StatelessWidget {
           flex: 1,
           child: Container(
             alignment: Alignment.centerRight,
-            child: Text(priceString),
-          )),
+            child: isTablePage
+                ? Text(priceString)
+                : isSelected
+                    ? const Icon(Icons.check)
+                    : null,
+          ))
     ]);
   }
 }

@@ -202,14 +202,14 @@ class CurrencyModel {
 
 @JsonSerializable()
 class CurrencyModelData {
+	int? id;
 	String? currency;
 	@JSONField(name: "currency_icon")
 	String? currencyIcon;
 	@JSONField(name: "twd_price")
 	double? twdPrice;
 	@JSONField(name: "amount_decimal")
-	String? amountDecimal;
-	String? id;
+	int? amountDecimal;
 
 	CurrencyModelData();
 

@@ -28,6 +28,10 @@ extension CurrencyModelExtension on CurrencyModel {
 
 CurrencyModelData $CurrencyModelDataFromJson(Map<String, dynamic> json) {
   final CurrencyModelData currencyModelData = CurrencyModelData();
+  final int? id = jsonConvert.convert<int>(json['id']);
+  if (id != null) {
+    currencyModelData.id = id;
+  }
   final String? currency = jsonConvert.convert<String>(json['currency']);
   if (currency != null) {
     currencyModelData.currency = currency;
@@ -40,40 +44,36 @@ CurrencyModelData $CurrencyModelDataFromJson(Map<String, dynamic> json) {
   if (twdPrice != null) {
     currencyModelData.twdPrice = twdPrice;
   }
-  final String? amountDecimal = jsonConvert.convert<String>(json['amount_decimal']);
+  final int? amountDecimal = jsonConvert.convert<int>(json['amount_decimal']);
   if (amountDecimal != null) {
     currencyModelData.amountDecimal = amountDecimal;
-  }
-  final String? id = jsonConvert.convert<String>(json['id']);
-  if (id != null) {
-    currencyModelData.id = id;
   }
   return currencyModelData;
 }
 
 Map<String, dynamic> $CurrencyModelDataToJson(CurrencyModelData entity) {
   final Map<String, dynamic> data = <String, dynamic>{};
+  data['id'] = entity.id;
   data['currency'] = entity.currency;
   data['currency_icon'] = entity.currencyIcon;
   data['twd_price'] = entity.twdPrice;
   data['amount_decimal'] = entity.amountDecimal;
-  data['id'] = entity.id;
   return data;
 }
 
 extension CurrencyModelDataExtension on CurrencyModelData {
   CurrencyModelData copyWith({
+    int? id,
     String? currency,
     String? currencyIcon,
     double? twdPrice,
-    String? amountDecimal,
-    String? id,
+    int? amountDecimal,
   }) {
     return CurrencyModelData()
+      ..id = id ?? this.id
       ..currency = currency ?? this.currency
       ..currencyIcon = currencyIcon ?? this.currencyIcon
       ..twdPrice = twdPrice ?? this.twdPrice
-      ..amountDecimal = amountDecimal ?? this.amountDecimal
-      ..id = id ?? this.id;
+      ..amountDecimal = amountDecimal ?? this.amountDecimal;
   }
 }
