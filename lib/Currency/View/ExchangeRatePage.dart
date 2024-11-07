@@ -20,7 +20,7 @@ class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(currencyViewModel.notifier).getMockData();
+      ref.read(currencyViewModel.notifier).getCurrencyData();
     });
   }
 

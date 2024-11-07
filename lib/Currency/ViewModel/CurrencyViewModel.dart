@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
+import 'package:flutter_currency/Currency/Service/CurrencyService.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CurrencyState {
@@ -34,6 +35,8 @@ class CurrencyViewModel extends AutoDisposeNotifier<CurrencyState> {
   @override
   CurrencyState build() => CurrencyState();
 
+  final CurrencyService _service = CurrencyService();
+
   TextEditingController mainCurrencyController = TextEditingController();
   TextEditingController secondCurrencyController = TextEditingController();
 
@@ -60,26 +63,25 @@ class CurrencyViewModel extends AutoDisposeNotifier<CurrencyState> {
 
   CurrencyModelData get getSecondCurrencyData => state.currencyModelData[secondCurrencyIdx];
 
-  void getMockData() {
-    Map<String, dynamic> data = {"data": jsonDecode(CurrencyModel().getMockData())};
-    CurrencyModel mockCurrencyModel = CurrencyModel.fromJson(data);
-    currencyModelData = mockCurrencyModel.data ?? [];
-  }
-
   void changeCurrencyIndex(bool isMainCurrency, int idx) =>
       isMainCurrency ? mainCurrencyIdx = idx : secondCurrencyIdx = idx;
 
-  /// 匯率計算
+  /// Func:匯率計算
   double calculateExchangeRate(CurrencyModelData fromCurrencyData, CurrencyModelData toCurrencyData) =>
       (fromCurrencyData.twdPrice ?? 0.0) / (toCurrencyData.twdPrice ?? 0.0);
 
+  /// Func:數字轉換化簡
   String calculateExchangeRateTxt(double value, double rate, int fixed) =>
       (value * rate).toStringAsFixed(fixed).replaceFirst(RegExp(r'\.?0+$'), '');
 
-  /// 根據兩種貨幣TWD匯率生成字串
+  /// Func: 根據兩種貨幣TWD匯率生成匯率字串
   String getConversionRateStr(CurrencyModelData fromCurrencyData, CurrencyModelData toCurrencyData) {
     String formattedRate = calculateExchangeRate(getMainCurrencyData, getSecondCurrencyData)
         .toStringAsFixed(getSecondCurrencyData.amountDecimal ?? 0);
     return "1 ${getMainCurrencyData.currency} ≈ $formattedRate ${getSecondCurrencyData.currency}";
   }
+
+
+  /// API
+  Future getCurrencyData() => _service.getCurrencyPairs().then((value) => currencyModelData = value?.data ?? []);
 }
