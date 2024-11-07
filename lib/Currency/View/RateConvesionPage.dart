@@ -122,6 +122,7 @@ class _RateConvesionPageState extends ConsumerState<RateConvesionPage> {
   }
 
   void reCalculate(String txt) {
+    if (_viewModel.secondCurrencyController.text.isEmpty) return;
     _viewModel.secondCurrencyController.text = _viewModel.calculateExchangeRateTxt(
         double.parse(txt),
         _viewModel.calculateExchangeRate(_viewModel.getMainCurrencyData, _viewModel.getSecondCurrencyData),

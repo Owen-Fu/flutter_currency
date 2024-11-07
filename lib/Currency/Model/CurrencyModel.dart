@@ -1,24 +1,28 @@
+import 'package:flutter_currency/Utility/Net/base_server_resp.dart';
 import 'package:flutter_currency/generated/json/CurrencyModel.g.dart';
 import 'package:flutter_currency/generated/json/base/json_field.dart';
 import 'dart:convert';
 
 @JsonSerializable()
-class CurrencyModel {
-	List<CurrencyModelData>? data;
+class CurrencyModel implements BaseServerResp {
+  List<CurrencyModelData>? data;
 
-	CurrencyModel();
+  CurrencyModel();
 
-	factory CurrencyModel.fromJson(Map<String, dynamic> json) => $CurrencyModelFromJson(json);
+  factory CurrencyModel.fromJson(Map<String, dynamic> json) => $CurrencyModelFromJson(json);
 
-	Map<String, dynamic> toJson() => $CurrencyModelToJson(this);
+  Map<String, dynamic> toJson() => $CurrencyModelToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 
-	String getMockData() {
-		return '''
+  @override
+  int? httpStatus;
+
+  String getMockData() {
+    return '''
 [
     {
         "currency": "OMR",
@@ -197,28 +201,28 @@ class CurrencyModel {
     }
 ]
     ''';
-	}
+  }
 }
 
 @JsonSerializable()
 class CurrencyModelData {
-	int? id;
-	String? currency;
-	@JSONField(name: "currency_icon")
-	String? currencyIcon;
-	@JSONField(name: "twd_price")
-	double? twdPrice;
-	@JSONField(name: "amount_decimal")
-	int? amountDecimal;
+  int? id;
+  String? currency;
+  @JSONField(name: "currency_icon")
+  String? currencyIcon;
+  @JSONField(name: "twd_price")
+  double? twdPrice;
+  @JSONField(name: "amount_decimal")
+  int? amountDecimal;
 
-	CurrencyModelData();
+  CurrencyModelData();
 
-	factory CurrencyModelData.fromJson(Map<String, dynamic> json) => $CurrencyModelDataFromJson(json);
+  factory CurrencyModelData.fromJson(Map<String, dynamic> json) => $CurrencyModelDataFromJson(json);
 
-	Map<String, dynamic> toJson() => $CurrencyModelDataToJson(this);
+  Map<String, dynamic> toJson() => $CurrencyModelDataToJson(this);
 
-	@override
-	String toString() {
-		return jsonEncode(this);
-	}
+  @override
+  String toString() {
+    return jsonEncode(this);
+  }
 }
