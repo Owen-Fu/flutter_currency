@@ -15,6 +15,7 @@ class CurrencyRateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     String currencyTitle = isTablePage ? "${currencyData.currency ?? ""}/TWD" : currencyData.currency ?? "";
     String priceString = NumberFormat('#,##0.00').format(currencyData.twdPrice);
+
     return Row(children: [
       Expanded(
           flex: 2,
@@ -23,11 +24,7 @@ class CurrencyRateWidget extends StatelessWidget {
               SizedBox(
                 width: 30.w,
                 height: 30.h,
-                child: CachedNetworkImage(
-                  imageUrl: currencyData.currencyIcon ?? '',
-                  errorWidget: (context, url, error) => const Icon(Icons.crop_square, size: 30),
-                  fit: BoxFit.cover,
-                ),
+                child: currencyIcon(),
               ),
               SizedBox(width: 8.w),
               Text(currencyTitle),
@@ -37,12 +34,20 @@ class CurrencyRateWidget extends StatelessWidget {
           flex: 1,
           child: Container(
             alignment: Alignment.centerRight,
-            child: isTablePage
-                ? Text(priceString)
-                : isSelected
-                    ? const Icon(Icons.check)
-                    : null,
+            child: isTablePage ? Text(priceString) : checkIcon(),
           ))
     ]);
+  }
+
+  Widget? checkIcon() => isSelected ? const Icon(Icons.check) : null;
+
+  Widget currencyIcon() {
+    return CachedNetworkImage(
+      imageUrl: currencyData.currencyIcon ?? '',
+      errorWidget: (context, url, error) => const Icon(Icons.crop_square, size: 30),
+      width: 30.w,
+      height: 30.h,
+      fit: BoxFit.cover,
+    );
   }
 }

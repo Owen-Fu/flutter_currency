@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
 import 'package:flutter_currency/Currency/View/Component/CurrencyRateWidget.dart';
-import 'package:flutter_currency/Currency/View/RateConvesionPage.dart';
+import 'package:flutter_currency/Currency/View/RateConversionPage.dart';
 import 'package:flutter_currency/Currency/ViewModel/CurrencyViewModel.dart';
 import 'package:flutter_currency/Utility/ColorUtility.dart';
 import 'package:flutter_currency/Utility/RadiusUtility.dart';
@@ -80,7 +80,7 @@ class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> {
         onTap: () => (currencyModelData.isNotEmpty)
             ? Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const RateConvesionPage()),
+                MaterialPageRoute(builder: (context) => const RateConversionPage()),
               )
             : null,
         child: ClipRRect(

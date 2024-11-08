@@ -19,7 +19,7 @@ class CurrencySelectWidget extends StatelessWidget {
     this.onTextChange,
   });
 
-  final Function(int)? onTap;
+  final ValueChanged<int>? onTap;
   final int selectIndex;
   final CurrencyModelData data;
   final bool readOnly;

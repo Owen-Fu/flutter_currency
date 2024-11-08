@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
 import 'package:flutter_currency/Currency/Service/CurrencyService.dart';
@@ -71,8 +69,8 @@ class CurrencyViewModel extends AutoDisposeNotifier<CurrencyState> {
       (fromCurrencyData.twdPrice ?? 0.0) / (toCurrencyData.twdPrice ?? 0.0);
 
   /// Func:數字轉換化簡
-  String calculateExchangeRateTxt(double value, double rate, int fixed) =>
-      (value * rate).toStringAsFixed(fixed).replaceFirst(RegExp(r'\.?0+$'), '');
+  String calculateExchangeRateTxt(double amount, double rate, int fixed) =>
+      (amount * rate).toStringAsFixed(fixed).replaceFirst(RegExp(r'\.?0+$'), '');
 
   /// Func: 根據兩種貨幣TWD匯率生成匯率字串
   String getConversionRateStr(CurrencyModelData fromCurrencyData, CurrencyModelData toCurrencyData) {
@@ -80,7 +78,6 @@ class CurrencyViewModel extends AutoDisposeNotifier<CurrencyState> {
         .toStringAsFixed(getSecondCurrencyData.amountDecimal ?? 0);
     return "1 ${getMainCurrencyData.currency} ≈ $formattedRate ${getSecondCurrencyData.currency}";
   }
-
 
   /// API
   Future getCurrencyData() => _service.getCurrencyPairs().then((value) => currencyModelData = value?.data ?? []);

@@ -10,7 +10,7 @@ class SelectCurrencyPage extends ConsumerWidget {
   const SelectCurrencyPage({super.key, this.selectIndex = 0, this.onTapCallBack});
 
   final int selectIndex;
-  final Function(int)? onTapCallBack;
+  final ValueChanged<int>? onTapCallBack;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

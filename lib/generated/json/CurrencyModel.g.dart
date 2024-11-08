@@ -1,5 +1,7 @@
 import 'package:flutter_currency/generated/json/base/json_convert_content.dart';
 import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
+import 'package:flutter_currency/Utility/Net/base_server_resp.dart';
+
 
 CurrencyModel $CurrencyModelFromJson(Map<String, dynamic> json) {
   final CurrencyModel currencyModel = CurrencyModel();
@@ -8,21 +10,28 @@ CurrencyModel $CurrencyModelFromJson(Map<String, dynamic> json) {
   if (data != null) {
     currencyModel.data = data;
   }
+  final int? httpStatus = jsonConvert.convert<int>(json['httpStatus']);
+  if (httpStatus != null) {
+    currencyModel.httpStatus = httpStatus;
+  }
   return currencyModel;
 }
 
 Map<String, dynamic> $CurrencyModelToJson(CurrencyModel entity) {
   final Map<String, dynamic> data = <String, dynamic>{};
   data['data'] = entity.data?.map((v) => v.toJson()).toList();
+  data['httpStatus'] = entity.httpStatus;
   return data;
 }
 
 extension CurrencyModelExtension on CurrencyModel {
   CurrencyModel copyWith({
     List<CurrencyModelData>? data,
+    int? httpStatus,
   }) {
     return CurrencyModel()
-      ..data = data ?? this.data;
+      ..data = data ?? this.data
+      ..httpStatus = httpStatus ?? this.httpStatus;
   }
 }
 
