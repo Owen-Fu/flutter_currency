@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_currency/Currency/View/ExchangeRatePage.dart';
 import 'package:flutter_currency/Utility/Net/requester.dart';
@@ -57,11 +58,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   @override
   void initState() {
     super.initState();
-    Requester();
+    Requester(isShowLog: kDebugMode);
     Requester.ins.respParser = (type, response) {
       return (jsonConvert.convertFuncMap[type.toString()])?.call((response.data ?? {}));
     };

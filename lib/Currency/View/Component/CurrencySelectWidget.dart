@@ -9,7 +9,7 @@ import 'package:flutter_currency/Utility/RegExpUtility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CurrencySelectWidget extends StatelessWidget {
-  const CurrencySelectWidget({
+  CurrencySelectWidget({
     super.key,
     this.onTap,
     this.selectIndex = 0,
@@ -25,6 +25,7 @@ class CurrencySelectWidget extends StatelessWidget {
   final bool readOnly;
   final TextEditingController? textController;
   final ValueChanged<String>? onTextChange;
+  final TextStyle textStyle = TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500);
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class CurrencySelectWidget extends StatelessWidget {
                   errorWidget: (context, url, error) => const Icon(Icons.crop_square, size: 30),
                   fit: BoxFit.cover,
                 ),
-                Text(data.currency ?? ''),
+                Text(data.currency ?? '', style: textStyle),
                 const Icon(IconUtility.downArrow, size: 20),
               ],
             ),

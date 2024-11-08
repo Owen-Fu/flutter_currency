@@ -15,6 +15,7 @@ class CurrencyRateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     String currencyTitle = isTablePage ? "${currencyData.currency ?? ""}/TWD" : currencyData.currency ?? "";
     String priceString = NumberFormat('#,##0.00').format(currencyData.twdPrice);
+    TextStyle textStyle = TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500);
 
     return Row(children: [
       Expanded(
@@ -27,14 +28,19 @@ class CurrencyRateWidget extends StatelessWidget {
                 child: currencyIcon(),
               ),
               SizedBox(width: 8.w),
-              Text(currencyTitle),
+              Text(currencyTitle, style: textStyle),
             ],
           )),
       Expanded(
           flex: 1,
           child: Container(
             alignment: Alignment.centerRight,
-            child: isTablePage ? Text(priceString) : checkIcon(),
+            child: isTablePage
+                ? Text(
+                    priceString,
+                    style: textStyle,
+                  )
+                : checkIcon(),
           ))
     ]);
   }

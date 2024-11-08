@@ -50,10 +50,21 @@ class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> with AvoidF
   Widget titleWidget() {
     return Container(
       height: 30.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       color: ColorUtility.appbarColor,
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [Text('Currency'), Text('Price')],
+        children: [
+          Expanded(
+              flex: 2,
+              child: Row(
+                children: [SizedBox(width: 38.w), const Text('Currency')],
+              )),
+          Expanded(
+            flex: 1,
+            child: Container(alignment: Alignment.center, child: const Text('Price')),
+          ),
+        ],
       ),
     );
   }

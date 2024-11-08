@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
 import 'package:flutter_currency/Currency/Service/CurrencyService.dart';
+import 'package:flutter_currency/Utility/RegExpUtility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CurrencyState {
@@ -27,13 +28,18 @@ class CurrencyState {
   }
 }
 
+final currencyServiceProvider = Provider<CurrencyService>((ref) => CurrencyService());
+
 final currencyViewModel = NotifierProvider.autoDispose<CurrencyViewModel, CurrencyState>(() => CurrencyViewModel());
 
 class CurrencyViewModel extends AutoDisposeNotifier<CurrencyState> {
   @override
-  CurrencyState build() => CurrencyState();
+  CurrencyState build() {
+    service = ref.watch(currencyServiceProvider);
+    return CurrencyState();
+  }
 
-  final CurrencyService _service = CurrencyService();
+  late final CurrencyService service;
 
   TextEditingController mainCurrencyController = TextEditingController();
   TextEditingController secondCurrencyController = TextEditingController();
@@ -61,24 +67,22 @@ class CurrencyViewModel extends AutoDisposeNotifier<CurrencyState> {
 
   CurrencyModelData get getSecondCurrencyData => state.currencyModelData[secondCurrencyIdx];
 
-  void changeCurrencyIndex(bool isMainCurrency, int idx) =>
-      isMainCurrency ? mainCurrencyIdx = idx : secondCurrencyIdx = idx;
-
   /// Func:匯率計算
   double calculateExchangeRate(CurrencyModelData fromCurrencyData, CurrencyModelData toCurrencyData) =>
       (fromCurrencyData.twdPrice ?? 0.0) / (toCurrencyData.twdPrice ?? 0.0);
 
-  /// Func:數字轉換化簡
+  /// Func:計算後, 字串根據fixed化簡, 並移除小數點後都是0的字串
   String calculateExchangeRateTxt(double amount, double rate, int fixed) =>
-      (amount * rate).toStringAsFixed(fixed).replaceFirst(RegExp(r'\.?0+$'), '');
+      RegExpUtility.removeTrailingDotsZeros((amount * rate).toStringAsFixed(fixed));
 
   /// Func: 根據兩種貨幣TWD匯率生成匯率字串
   String getConversionRateStr(CurrencyModelData fromCurrencyData, CurrencyModelData toCurrencyData) {
-    String formattedRate = calculateExchangeRate(getMainCurrencyData, getSecondCurrencyData)
-        .toStringAsFixed(getSecondCurrencyData.amountDecimal ?? 0);
+    String formattedRate = RegExpUtility.removeTrailingDotsZeros(
+        calculateExchangeRate(getMainCurrencyData, getSecondCurrencyData)
+            .toStringAsFixed(getSecondCurrencyData.amountDecimal ?? 0));
     return "1 ${getMainCurrencyData.currency} ≈ $formattedRate ${getSecondCurrencyData.currency}";
   }
 
   /// API
-  Future getCurrencyData() => _service.getCurrencyPairs().then((value) => currencyModelData = value?.data ?? []);
+  Future getCurrencyData() => service.getCurrencyPairs().then((value) => currencyModelData = value?.data ?? []);
 }
