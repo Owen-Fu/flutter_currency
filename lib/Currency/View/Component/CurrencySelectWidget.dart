@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
 import 'package:flutter_currency/Currency/View/SelectCurrencyPage.dart';
+import 'package:flutter_currency/Utility/DecimalInputFormatter.dart';
 import 'package:flutter_currency/Utility/IconUtility.dart';
 import 'package:flutter_currency/Utility/RadiusUtility.dart';
 import 'package:flutter_currency/Utility/RegExpUtility.dart';
@@ -82,7 +83,8 @@ class CurrencySelectWidget extends StatelessWidget {
           readOnly: readOnly,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExpUtility.decimalInputFormatter),
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+            DecimalInputFormatter(),
           ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),
