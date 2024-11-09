@@ -13,8 +13,9 @@ class Requester {
 
   final Dio _dio = Dio();
 
-  Requester() {
+  Requester({bool isShowLog = false}) {
     _ins = this;
+    if (isShowLog) _dio.interceptors.add(LogInterceptor(requestBody: true, responseBody: true, error: true));
   }
 
   RespParser? respParser;
@@ -36,6 +37,7 @@ class Requester {
         return ServerSuccess(httpStatus, response.data, null);
       } else {
         if (response.data is List<dynamic>) response.data = {"data": response.data};
+
         /// 內容不是 map => error
         if (response.data is String) throw ServerError.fromServer(httpStatus, response.data, null);
         final resp = respParser?.call(T, response)?..httpStatus = httpStatus;

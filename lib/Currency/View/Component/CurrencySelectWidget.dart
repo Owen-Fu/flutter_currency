@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
 import 'package:flutter_currency/Currency/View/SelectCurrencyPage.dart';
+import 'package:flutter_currency/Utility/DecimalInputFormatter.dart';
 import 'package:flutter_currency/Utility/IconUtility.dart';
 import 'package:flutter_currency/Utility/RadiusUtility.dart';
 import 'package:flutter_currency/Utility/RegExpUtility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CurrencySelectWidget extends StatelessWidget {
-  const CurrencySelectWidget({
+  CurrencySelectWidget({
     super.key,
     this.onTap,
     this.selectIndex = 0,
@@ -19,12 +20,13 @@ class CurrencySelectWidget extends StatelessWidget {
     this.onTextChange,
   });
 
-  final Function(int)? onTap;
+  final ValueChanged<int>? onTap;
   final int selectIndex;
   final CurrencyModelData data;
   final bool readOnly;
   final TextEditingController? textController;
   final ValueChanged<String>? onTextChange;
+  final TextStyle textStyle = TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500);
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +62,7 @@ class CurrencySelectWidget extends StatelessWidget {
                   errorWidget: (context, url, error) => const Icon(Icons.crop_square, size: 30),
                   fit: BoxFit.cover,
                 ),
-                Text(data.currency ?? ''),
+                Text(data.currency ?? '', style: textStyle),
                 const Icon(IconUtility.downArrow, size: 20),
               ],
             ),
@@ -81,7 +83,8 @@ class CurrencySelectWidget extends StatelessWidget {
           readOnly: readOnly,
           keyboardType: const TextInputType.numberWithOptions(decimal: true),
           inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExpUtility.decimalInputFormatter),
+            FilteringTextInputFormatter.allow(RegExp(r'[0-9.]')),
+            DecimalInputFormatter(),
           ],
           decoration: const InputDecoration(
             border: OutlineInputBorder(),

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
 import 'package:flutter_currency/Currency/View/Component/CurrencyRateWidget.dart';
-import 'package:flutter_currency/Currency/View/RateConvesionPage.dart';
+import 'package:flutter_currency/Currency/View/RateConversionPage.dart';
 import 'package:flutter_currency/Currency/ViewModel/CurrencyViewModel.dart';
+import 'package:flutter_currency/Utility/AvoidFastButtonClickMixin.dart';
 import 'package:flutter_currency/Utility/ColorUtility.dart';
 import 'package:flutter_currency/Utility/RadiusUtility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -15,7 +16,7 @@ class ExchangeRatePage extends ConsumerStatefulWidget {
   ConsumerState<ExchangeRatePage> createState() => _ExchangeRatePageState();
 }
 
-class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> {
+class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> with AvoidFastButtonClickMixin {
   @override
   void initState() {
     super.initState();
@@ -49,28 +50,44 @@ class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> {
   Widget titleWidget() {
     return Container(
       height: 30.h,
+      padding: EdgeInsets.symmetric(horizontal: 20.w),
       color: ColorUtility.appbarColor,
-      child: const Row(
+      child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
-        children: [Text('Currency'), Text('Price')],
+        children: [
+          Expanded(
+              flex: 2,
+              child: Row(
+                children: [SizedBox(width: 38.w), const Text('Currency')],
+              )),
+          Expanded(
+            flex: 1,
+            child: Container(alignment: Alignment.center, child: const Text('Price')),
+          ),
+        ],
       ),
     );
   }
 
   Widget tableWidget(List<CurrencyModelData> currencyModelData) {
     return Expanded(
-        child: ListView.separated(
-      padding: EdgeInsets.symmetric(vertical: 20.h),
-      separatorBuilder: (BuildContext context, int index) => SizedBox(height: 25.h),
-      itemCount: currencyModelData.length,
-      physics: const BouncingScrollPhysics(),
-      itemBuilder: (context, index) {
-        return Container(
-          padding: EdgeInsets.symmetric(horizontal: 20.w),
-          child: CurrencyRateWidget(currencyData: currencyModelData[index]),
-        );
-      },
-    ));
+        child: RefreshIndicator(
+            onRefresh: () async {
+              if (isRedundantClick(DateTime.now())) return;
+              ref.read(currencyViewModel.notifier).getCurrencyData();
+            },
+            child: ListView.separated(
+              padding: EdgeInsets.symmetric(vertical: 20.h),
+              separatorBuilder: (BuildContext context, int index) => SizedBox(height: 25.h),
+              itemCount: currencyModelData.length,
+              physics: const AlwaysScrollableScrollPhysics(),
+              itemBuilder: (context, index) {
+                return Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  child: CurrencyRateWidget(currencyData: currencyModelData[index]),
+                );
+              },
+            )));
   }
 
   Widget buttonWidget(List<CurrencyModelData> currencyModelData) {
@@ -80,7 +97,7 @@ class _ExchangeRatePageState extends ConsumerState<ExchangeRatePage> {
         onTap: () => (currencyModelData.isNotEmpty)
             ? Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const RateConvesionPage()),
+                MaterialPageRoute(builder: (context) => const RateConversionPage()),
               )
             : null,
         child: ClipRRect(

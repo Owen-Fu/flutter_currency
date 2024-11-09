@@ -215,7 +215,7 @@ class CurrencyModelData {
   @JSONField(name: "amount_decimal")
   int? amountDecimal;
 
-  CurrencyModelData();
+  CurrencyModelData({this.id, this.currency, this.currencyIcon, this.twdPrice, this.amountDecimal});
 
   factory CurrencyModelData.fromJson(Map<String, dynamic> json) => $CurrencyModelDataFromJson(json);
 
