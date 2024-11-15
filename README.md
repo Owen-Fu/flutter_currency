@@ -1,5 +1,7 @@
 # flutter_currency
 
+貨幣兌換器：根據不同貨幣匯率來進行不同等值貨幣換算
+
 版本  
   flutter 3.24.3  
 
