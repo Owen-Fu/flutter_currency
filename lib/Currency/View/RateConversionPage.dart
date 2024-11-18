@@ -109,7 +109,7 @@ class _RateConversionPageState extends ConsumerState<RateConversionPage> {
     return Positioned(
       top: 80.h,
       right: 30.w,
-      child: Text(_viewModel.getConversionRateStr(_viewModel.getMainCurrencyData, _viewModel.getSecondCurrencyData)),
+      child: Text(_viewModel.getConversionRateStr()),
     );
   }
 
@@ -141,22 +141,22 @@ class _RateConversionPageState extends ConsumerState<RateConversionPage> {
   }
 
   void onMainCurrencyTextChange(String txt) {
-    if (txt.isEmpty) _viewModel.secondCurrencyController.text = "";
-    if (!RegExpUtility.isValidDecimal(txt)) return;
-    _viewModel.secondCurrencyController.text = _viewModel.calculateExchangeRateTxt(
-        double.parse(txt),
-        _viewModel.calculateExchangeRate(_viewModel.getMainCurrencyData, _viewModel.getSecondCurrencyData),
-        _viewModel.getSecondCurrencyData.amountDecimal ?? 0);
+    if (txt.isEmpty) {
+      _viewModel.clearText();
+      return;
+    }
+    _viewModel.secondCurrencyController.text = getSecondCurrencyText(txt);
   }
 
   void reCalculate(String txt) {
-    if (_viewModel.secondCurrencyController.text.isEmpty) return;
+    if (_viewModel.mainCurrencyController.text.isEmpty) return;
+    _viewModel.secondCurrencyController.text = getSecondCurrencyText(txt);
+  }
 
+  String getSecondCurrencyText(String txt) {
     final double amount = double.parse(txt);
-    final double exchangeRate =
-        _viewModel.calculateExchangeRate(_viewModel.getMainCurrencyData, _viewModel.getSecondCurrencyData);
+    final double exchangeRate = _viewModel.getMainCurrencyData.calculateExchangeRate(_viewModel.getSecondCurrencyData);
     final int decimal = _viewModel.getSecondCurrencyData.amountDecimal ?? 0;
-
-    _viewModel.secondCurrencyController.text = _viewModel.calculateExchangeRateTxt(amount, exchangeRate, decimal);
+    return RegExpUtility.removeTrailingDotsZeros((amount * exchangeRate).toStringAsFixed(decimal));
   }
 }

@@ -6,7 +6,6 @@ import 'package:flutter_currency/Currency/View/SelectCurrencyPage.dart';
 import 'package:flutter_currency/Utility/DecimalInputFormatter.dart';
 import 'package:flutter_currency/Utility/IconUtility.dart';
 import 'package:flutter_currency/Utility/RadiusUtility.dart';
-import 'package:flutter_currency/Utility/RegExpUtility.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CurrencySelectWidget extends StatelessWidget {

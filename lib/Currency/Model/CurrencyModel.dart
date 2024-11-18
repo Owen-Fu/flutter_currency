@@ -1,4 +1,5 @@
 import 'package:flutter_currency/Utility/Net/base_server_resp.dart';
+import 'package:flutter_currency/Utility/RegExpUtility.dart';
 import 'package:flutter_currency/generated/json/CurrencyModel.g.dart';
 import 'package:flutter_currency/generated/json/base/json_field.dart';
 import 'dart:convert';
@@ -224,5 +225,18 @@ class CurrencyModelData {
   @override
   String toString() {
     return jsonEncode(this);
+  }
+
+  double calculateExchangeRate(CurrencyModelData toCurrencyData) =>
+      (twdPrice ?? 0.0) / (toCurrencyData.twdPrice ?? 1.0);
+
+  String getConversionRateStr({
+    required CurrencyModelData secondCurrency,
+  }) {
+    double exchangeRate = calculateExchangeRate(secondCurrency);
+    String formattedRate = RegExpUtility.removeTrailingDotsZeros(
+      exchangeRate.toStringAsFixed(secondCurrency.amountDecimal ?? 0),
+    );
+    return "1 $currency ≈ $formattedRate ${secondCurrency.currency}";
   }
 }
