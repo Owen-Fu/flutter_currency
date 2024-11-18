@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_currency/Currency/Model/CurrencyModel.dart';
 import 'package:flutter_currency/Currency/Service/CurrencyService.dart';
-import 'package:flutter_currency/Utility/RegExpUtility.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class CurrencyState {
@@ -51,6 +50,11 @@ class CurrencyViewModel extends AutoDisposeNotifier<CurrencyState> {
     secondCurrencyIdx = (currencyModelData.length > 1) ? 1 : 0;
   }
 
+  void clearText() {
+    mainCurrencyController.text = "";
+    secondCurrencyController.text = "";
+  }
+
   set currencyModelData(List<CurrencyModelData> value) => state = state.copyWith(currencyModelData: value);
 
   List<CurrencyModelData> get currencyModelData => state.currencyModelData;
@@ -67,21 +71,7 @@ class CurrencyViewModel extends AutoDisposeNotifier<CurrencyState> {
 
   CurrencyModelData get getSecondCurrencyData => state.currencyModelData[secondCurrencyIdx];
 
-  /// Func:匯率計算
-  double calculateExchangeRate(CurrencyModelData fromCurrencyData, CurrencyModelData toCurrencyData) =>
-      (fromCurrencyData.twdPrice ?? 0.0) / (toCurrencyData.twdPrice ?? 0.0);
-
-  /// Func:計算後, 字串根據fixed化簡, 並移除小數點後都是0的字串
-  String calculateExchangeRateTxt(double amount, double rate, int fixed) =>
-      RegExpUtility.removeTrailingDotsZeros((amount * rate).toStringAsFixed(fixed));
-
-  /// Func: 根據兩種貨幣TWD匯率生成匯率字串
-  String getConversionRateStr(CurrencyModelData fromCurrencyData, CurrencyModelData toCurrencyData) {
-    String formattedRate = RegExpUtility.removeTrailingDotsZeros(
-        calculateExchangeRate(getMainCurrencyData, getSecondCurrencyData)
-            .toStringAsFixed(getSecondCurrencyData.amountDecimal ?? 0));
-    return "1 ${getMainCurrencyData.currency} ≈ $formattedRate ${getSecondCurrencyData.currency}";
-  }
+  String getConversionRateStr() => getMainCurrencyData.getConversionRateStr(secondCurrency: getSecondCurrencyData);
 
   /// API
   Future getCurrencyData() => service.getCurrencyPairs().then((value) => currencyModelData = value?.data ?? []);
