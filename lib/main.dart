@@ -6,6 +6,7 @@ import 'package:flutter_currency/generated/json/base/json_convert_content.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+///test
 void main() {
   runApp(const ProviderScope(child: MyApp()));
 }
