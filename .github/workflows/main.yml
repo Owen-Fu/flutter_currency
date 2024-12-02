@@ -7,7 +7,8 @@ on:
     branches: [ develop ]
     
 jobs:
-  test:
+  android_test:
+    name: Android Tests
     runs-on: ubuntu-latest
 
     strategy:
@@ -32,7 +33,31 @@ jobs:
       # 安裝相依套件
       - name: Install dependencies
         run: flutter pub get
+        
+      # 設置 Android 環境
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33  # 指定 Android API 等級
+          build-tools: 33.0.0
 
+      # 啟動 Android 模擬器
+      - name: Start Android emulator
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 33
+          target: default
+          arch: x86_64
+          force-avd-creation: true
+          emulator-options: -no-window -no-audio -no-boot-anim
+
+      # 等待模擬器啟動完成
+      - name: Wait for emulator to start
+        run: |
+          adb wait-for-device
+          adb shell getprop sys.boot_completed
+        timeout-minutes: 3
+        
       # 運行測試
       - name: Run tests
         run: flutter test
