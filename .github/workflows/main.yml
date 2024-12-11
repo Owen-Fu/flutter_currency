@@ -1,8 +1,6 @@
 name: flutter test
 
 on:
-  push:
-    branches: [ develop ]
   pull_request:
     branches: [ develop ]
     
@@ -18,6 +16,9 @@ jobs:
       # 檢出程式碼
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
 
       # 設置 Flutter
       - name: Set up Flutter
@@ -36,6 +37,34 @@ jobs:
       # 運行測試
       - name: Run tests
         run: flutter test
+
+      # 設置Java Version為17
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 17
+          distribution: "temurin"
+
+      # 打包Andorid APK 並拆分平台編譯
+      - name: Check Build Andorid APK
+        run: flutter build apk --split-per-abi
+
+      - name: Create Release
+        uses: ncipollo/release-action@v1.10.0
+        with:
+            artifacts: "build/app/outputs/flutter-apk/*.apk"
+            token: ${{ secrets.GITHUB_TOKEN }}
+            tag: v1.0.${{ github.run_number }}
+            generateReleaseNotes: true # 自動生成 Release Notes
+            replacesArtifacts: true # 覆蓋舊的 Artifacts（如果有相同標籤）
+#      # 打包iOS
+#      - name: Check Build iOS
+#        run:
+#          flutter build ios
+#          xcodebuild -workspace ios/Runner.xcworkspace \
+#          -scheme Runner \
+#          -configuration Release \
+#          CODE_SIGNING_ALLOWED=NO
 
       # 可選：上傳測試覆蓋率報告
       # - name: Upload coverage to Coveralls
