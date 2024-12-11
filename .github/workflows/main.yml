@@ -6,7 +6,7 @@ on:
     
 jobs:
   test:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     strategy:
       matrix:
@@ -45,26 +45,30 @@ jobs:
           java-version: 17
           distribution: "temurin"
 
-      # 打包Andorid APK 並拆分平台編譯
-      - name: Check Build Andorid APK
+      # Build apk
+      - name: Build Andorid APK
         run: flutter build apk --split-per-abi
 
-      - name: Create Release
-        uses: ncipollo/release-action@v1.10.0
+
+      # 打包iOS
+      - name: Build iOS
+        run: |
+          flutter build ios --no-codesign
+          cd build/ios/iphoneos
+          mkdir Payload
+          cd Payload
+          ln -s ../Runner.app
+          cd ..
+          zip -r app.ipa Payload
+  
+      # 產出檔案
+      - name: Push to Releases
+        uses: ncipollo/release-action@v1
         with:
-            artifacts: "build/app/outputs/flutter-apk/*.apk"
-            token: ${{ secrets.GITHUB_TOKEN }}
-            tag: v1.0.${{ github.run_number }}
-            generateReleaseNotes: true # 自動生成 Release Notes
-            replacesArtifacts: true # 覆蓋舊的 Artifacts（如果有相同標籤）
-#      # 打包iOS
-#      - name: Check Build iOS
-#        run:
-#          flutter build ios
-#          xcodebuild -workspace ios/Runner.xcworkspace \
-#          -scheme Runner \
-#          -configuration Release \
-#          CODE_SIGNING_ALLOWED=NO
+          artifacts: "build/app/outputs/apk/release/*,build/ios/iphoneos/app.ipa"
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: v1.0.${{ github.run_number }}
+          replacesArtifacts: true # 覆蓋舊的 Artifacts（如果有相同標籤）
 
       # 可選：上傳測試覆蓋率報告
       # - name: Upload coverage to Coveralls
