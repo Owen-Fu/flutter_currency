@@ -1,0 +1,39 @@
+stages:
+  - ci-mr-check
+  - ci-error
+  - build
+
+variables:
+  LC_ALL: "en_US.UTF-8"
+  LANG: "en_US.UTF-8"
+  CI_DEBUG_TRACE: "true"
+
+mr-check:
+  stage: ci-mr-check
+  tags:
+    - "flutter"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  script:
+    - flutter --version
+    - flutter pub get
+    - flutter test
+
+on-ci-failure:
+  stage: ci-error
+  tags:
+    - "flutter"
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+      when: on_failure
+  script:
+    - echo test fail
+
+build:
+  stage: build
+  tags:
+    - "flutter"
+  rules:
+    - if: '$CI_COMMIT_REF_NAME =~ /^release/'  # 只在 release/ 分支執行
+  script:
+    - flutter build apk --split-per-abi
